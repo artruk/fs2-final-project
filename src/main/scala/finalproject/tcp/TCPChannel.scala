@@ -43,9 +43,14 @@ object TCPChannel {
          *
          * Read one chunk of size 'bufferSize' from 'socketChannel'.
          */
-        val readChunk: F[Chunk[Byte]] =
-          ???
-
+        val readChunk: F[Chunk[Byte]] = {
+          Sync[F].blocking {
+            val byteBuffer = ByteBuffer.allocate(bufferSize)
+            socketChannel.read(byteBuffer)
+            byteBuffer.flip()
+            Chunk.byteBuffer(byteBuffer)
+          }
+        }
         Stream.evalUnChunk(readChunk).repeat
       }
 
