@@ -3,6 +3,8 @@ package finalproject.server
 import cats._
 import cats.implicits._
 
+import scala.util.Try
+
 /**
  * An http request.
  */
@@ -20,8 +22,8 @@ case class Request(
    *
    * If the header is not present or any error occurs, it returns 0.
    */
-  def contentLength: Int =
-    ???
+  def contentLength: Int = headers.get("Content-Length").fold(0)(s => Try(s.toInt).getOrElse(0))
+
 
   override def toString: String = Request.show.show(this)
 }
