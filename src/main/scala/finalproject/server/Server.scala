@@ -67,7 +67,14 @@ object Server {
        * Handle errors by logging the exception message to console (use the Console[F] instance).
        */
       def connectionStream(socket: TCPChannel[F]): Stream[F, Nothing] =
-        ???
+        socket.stream
+          .through(pipes.requests)
+          .through(pipes.log("[*] New request"))
+          .evalMap(handleRequest)
+          .through(pipes.log("[*] New response"))
+          .evalMap(r => socket.write(r.bytes))
+          .handleError(e => Console[F].println(e.getMessage))
+          .drain
 
       override def stream: Stream[F, Nothing] = {
         tcpServer.stream
