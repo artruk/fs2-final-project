@@ -73,7 +73,7 @@ object Server {
           .evalMap(handleRequest)
           .through(pipes.log("[*] New response"))
           .evalMap(r => socket.write(r.bytes))
-          .handleError(e => Console[F].println(e.getMessage))
+          .handleErrorWith(e => Stream.exec(Console[F].println(e.getMessage)))
           .drain
 
       override def stream: Stream[F, Nothing] = {

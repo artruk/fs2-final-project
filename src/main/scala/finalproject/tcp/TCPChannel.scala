@@ -47,8 +47,7 @@ object TCPChannel {
           Sync[F].blocking {
             val byteBuffer = ByteBuffer.allocate(bufferSize)
             socketChannel.read(byteBuffer)
-            byteBuffer.flip()
-            Chunk.byteBuffer(byteBuffer)
+            Chunk.array(byteBuffer.array())
           }
         }
         Stream.evalUnChunk(readChunk).repeat

@@ -17,7 +17,9 @@ case class Response(
    * Transforms the response into a valid byte representation as per HTTP specs.
    */
   def bytes: Array[Byte] =
-    s"$httpVersion ${status.code} ${status.reason}\r\n".getBytes ++ headers.map { case (k, v) => s"$k: $v" }.mkString("\r\n").getBytes ++ s"\r\n\r\n".getBytes ++ body
+    s"$httpVersion ${status.code} ${status.reason}\r\n".getBytes ++
+      headers.map { case (k, v) => s"$k: $v\r\n" }.mkString.getBytes ++
+      s"\r\n".getBytes ++ body
 
   /**
    * String representation of this response (mostly for debugging).
